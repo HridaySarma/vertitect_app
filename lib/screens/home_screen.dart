@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,22 +17,15 @@ class _HomeScreenState extends State<HomeScreen> {
   late UserModel _userModel;
 
   Future<UserModel> _getUserData() async {
-
     final queryParameters = {
       'p': 'date-attendance',
-
     };
-    final uri = Uri.http('hrm.abybabyevents.in', '/api/index.php', queryParameters);
-    final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-    final response = await http.get(uri, headers: headers);
-    print(response.statusCode);
-    var data;
-    if(response.body.isNotEmpty) {
-     data =  json.decode(response.body);
-    }else{
-      print('empty body');
-    }
-        // var data = jsonDecode(response.body.toString());
+
+    var response = await http.post(Uri.https('hrm.abybabyevents.in', '/api/index.php',queryParameters),
+        body: {"date": "15-01-2022"});
+
+    var data = jsonDecode(response.body.toString());
+    print(data);
 
     if (response.statusCode == 200) {
       UserModel userModel = UserModel.fromJson(data);
@@ -47,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_){
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       _getUserData();
     });
   }
